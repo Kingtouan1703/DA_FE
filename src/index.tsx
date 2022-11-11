@@ -11,7 +11,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import Home from './routes/home/home'
 import User from './routes/user/user'
 import Dashboard from './routes/dashboard/dashboard'
-
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import Admin from './routes/admin/admin'
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
@@ -21,8 +23,12 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: 'Home',
+        path: '/',
         element: <Home />
+      },
+      {
+        path: '/admin',
+        element: <Admin />
       },
       {
         path: 'user',
@@ -37,6 +43,7 @@ const router = createBrowserRouter([
   {
     path: '/auth/login',
     element: <Login />,
+
     errorElement: <ErrorPage />
   },
   {
@@ -50,6 +57,7 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
+      <ToastContainer />
       <RouterProvider router={router} />
     </QueryClientProvider>
   </React.StrictMode>

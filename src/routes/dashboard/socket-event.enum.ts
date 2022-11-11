@@ -1,5 +1,4 @@
 export enum SocketEvent {
-    ROOM_SENSOR = 'room_sensor',
-    ATTENDANCE ='attendance' , 
-    
+  ROOM_SENSOR = 'room_sensor',
+  ATTENDANCE = 'attendance'
 }
