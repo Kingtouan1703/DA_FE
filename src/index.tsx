@@ -14,6 +14,7 @@ import Dashboard from './routes/dashboard/dashboard'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Admin from './routes/admin/admin'
+import Attendance from './routes/attendance/attendance'
 const queryClient = new QueryClient()
 
 const router = createBrowserRouter([
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Home />
+      },
+      {
+        path: '/attendance',
+        element: <Attendance />
       },
       {
         path: '/admin',

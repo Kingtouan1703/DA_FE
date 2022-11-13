@@ -1,4 +1,5 @@
 import create from 'zustand'
+import { UserData } from '../api/admin/admin.api'
 
 interface LoginState {
   isLoggin: boolean
@@ -7,8 +8,10 @@ interface LoginState {
   setName: (name: string) => void
   username: string
   setUsername2: (username: string) => void
-  finger_register: boolean | null
-  setFingerRegister: (finger_register: boolean) => void
+  user_id: string
+  setUserId: (user_id: string) => void
+  userDetail: UserData | undefined
+  setUserDetai: (userDetail: UserData) => void
 }
 
 const useUserStore = create<LoginState>((set) => ({
@@ -32,11 +35,17 @@ const useUserStore = create<LoginState>((set) => ({
       username
     })),
 
-  finger_register: null,
-  setFingerRegister: (finger_register) =>
+  user_id: '',
+  setUserId: (user_id) =>
     set((state) => ({
       ...state,
-      finger_register
+      user_id
+    })),
+  userDetail: undefined,
+  setUserDetai: (userDetail) =>
+    set((state) => ({
+      ...state,
+      userDetail
     }))
 }))
 

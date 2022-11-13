@@ -12,3 +12,23 @@ export const ControllerLed = (query: LedQuery) => {
     method: 'get'
   })
 }
+
+export enum Role {
+  ADMIN = 'admin',
+  USER = 'user'
+}
+
+export interface UserData {
+  username: string
+  name: string
+  finger_register: boolean | null
+  can_use_finger: boolean | null
+  roles: Role[] | []
+}
+
+export const getUsers = () => {
+  return axios2.request<UserData[]>({
+    url: `${process.env.REACT_APP_BACK_END}/user`,
+    method: 'get'
+  })
+}

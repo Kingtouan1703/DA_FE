@@ -6,7 +6,7 @@ import useUserStore from '../../store/user.store'
 export default function Login() {
   const [username, setUsername] = useState<string>('')
   const [password, setPassword] = useState<string>('')
-  const {setName , setFingerRegister , setUsername2 , setIsLoggin }  = useUserStore()
+  const {setName , setUserId , setUsername2 , setIsLoggin }  = useUserStore()
   const navigate = useNavigate()
   const handleSubmit = async (e: any) => {
     e.preventDefault()
@@ -15,7 +15,7 @@ export default function Login() {
       // redi rect
       const userData = data.data.data
       setName(userData.name)
-      setFingerRegister(userData.finger_register)
+      setUserId(userData._id)
       setUsername2(userData.username)
       setIsLoggin(true)
       Cookies.set('token', data.data.access_token)
