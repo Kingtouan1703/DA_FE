@@ -8,6 +8,7 @@ import { handleError } from '../../api/instances.api'
 export default function Admin() {
   const [users, setUsers] = useState<UserData[]>()
   const [leds, setLeds] = useState<LedData[]>()
+
   const handleControllLed = async (state: LedStatus, led_number: number) => {
     const oppositeState = state === 'ON' ? LedStatus.OFF : LedStatus.ON
     try {
@@ -39,27 +40,28 @@ export default function Admin() {
   }, [])
 
   return (
-    <div className="p-2">
+    <div className="">
       <h2 className="text-lg text-gray-900  dark:text-white font-semibold">Admin Page</h2>
       <p className="text-sm text-gray-500 mb-5">Admin page to controll device</p>
       <div className="mb-5 ">
         <h2 className="text-md text-gray-900 font-semibold">Controll Led</h2>
         <div className="p-2"></div>
-
-        {leds?.map((items) => {
-          return (
-            <div key={items.led_number}>
-              <div className="flex items-center ">
-                <TbLamp size={40} />
-                <div className="text-3xl">{items.led_number} :</div>
-                <div>{items.state === 'ON' ? <TbBulb size={40} /> : <TbBulbOff size={40} />}</div>
-                <Button onClick={() => handleControllLed(items.state, items.led_number)}>
-                  {items.state === 'ON' ? 'Tat' : 'On'}
-                </Button>
+        <div className='flex'>
+          {leds?.map((items) => {
+            return (
+              <div key={items.led_number}>
+                <div className="flex items-center mr-2 ">
+                  <TbLamp size={40} />
+                  <div className="text-3xl">{items.led_number} :</div>
+                  <div>{items.state === 'ON' ? <TbBulb size={40} /> : <TbBulbOff size={40} />}</div>
+                  <Button onClick={() => handleControllLed(items.state, items.led_number)}>
+                    {items.state === 'ON' ? 'OFF' : 'ON'}
+                  </Button>
+                </div>
               </div>
-            </div>
-          )
-        })}
+            )
+          })}
+        </div>
       </div>
       <div>
         <h2 className="text-md text-gray-900 font-semibold mb-3">Controll Users</h2>

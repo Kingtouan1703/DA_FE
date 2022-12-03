@@ -20,7 +20,7 @@ export default function User() {
   
 
   return (
-    <div className="p-2">
+    <div className="">
       <h2 className="text-lg text-gray-900  dark:text-white font-semibold">User Detail Page</h2>
       <p className="text-sm text-gray-500 mb-5">This Page contain all user data</p>
 

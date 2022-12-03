@@ -11,7 +11,8 @@ import { SlPeople } from 'react-icons/sl'
 export const socket = io(`${process.env.REACT_APP_BACK_END}`)
 
 interface RoomSensorPayload {
-  temp: string, hum: string
+  temp: string
+  hum: string
 }
 
 export default function Dashboard() {
@@ -20,6 +21,7 @@ export default function Dashboard() {
   const [amountUsers, setAmountUsers] = useState<number>()
   const [humidity, setHumidity] = useState<number>()
   const [leds, setLeds] = useState<LedData[]>()
+  
   const getRoomdata = async () => {
     try {
       const roomInfo = await getRoomInfo()
@@ -32,7 +34,7 @@ export default function Dashboard() {
       handleError(error as any)
     }
   }
-  
+
   useEffect(() => {
     getRoomdata()
   }, [])
@@ -45,14 +47,14 @@ export default function Dashboard() {
     socket.on('disconnect', () => {
       setIsConnected(false)
     })
-    socket.on('led_change'  , (data : LedData[]) => {
+    socket.on('led_change', (data: LedData[]) => {
       setLeds(data)
     })
-    socket.on('abc'  , (data : LedData[]) => {
+    socket.on('abc', (data: LedData[]) => {
       console.log(data)
     })
 
-    socket.on('room_sensor', (data :RoomSensorPayload) => {
+    socket.on('room_sensor', (data: RoomSensorPayload) => {
       setHumidity(+data.hum)
       setTemp(+data.temp)
     })
@@ -74,12 +76,51 @@ export default function Dashboard() {
   date.setHours(0, 0, 0, 0)
   date.setDate(date.getDate() + 1)
   return (
-    <div className="p-2">
-      <h2 className="text-lg text-gray-900  dark:text-white font-semibold"> Dashboard Page</h2>
-      <p className='text-sm text-gray-500 mb-5'>Room current infomation</p>
-      <div className="grid grid-cols-10 ">
-        <div className="col-span-10 grid grid-cols-2 grid-rows-2 gap-5">
-          <div className="shadow-2xl bg-white rounded-lg ">
+    <div className="">
+      <h2 className="text-lg text-gray-900  font-medium  dark:text-white font-semiFbold">
+        {' '}
+        Dashboard Page
+      </h2>
+      <div className="rounded-lg">
+        <div className="text-sm text-gray-500 mb-5">Lamp Infomation</div>
+        <div className="flex mb-5">
+          {leds?.map((items) => {
+            return (
+              <div
+                className="flex items-center justify-center shadow-xl bg-white rounded-lg mr-2 p-3"
+                key={items.led_number}>
+                <TbLamp size={40} />
+                <div className="text-3xl">{items.led_number} :</div>
+                <div>
+                  {items.state === 'ON' ? (
+                    <TbBulb className="mx-2" size={40} />
+                  ) : (
+                    <TbBulbOff className="mx-2" size={40} />
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+      <div className="rounded-lg">
+        <div className="text-sm text-gray-500 mb-5">Device Infomation</div>
+        <div className="flex mb-5">
+          <div className="text-center w-full text-md font-medium text-gray-900 dark:text-gray-300">
+            Nhiệt độ
+          </div>
+          <div className="p-5 flex justify-center items-center">
+            <div className="text-3xl ">
+              {temp} <span className="mr-2">&#8451;</span>
+            </div>
+            <FaTemperatureHigh size={28} />
+          </div>
+        </div>
+      </div>
+      <p className="text-sm text-gray-500 mb-5">Room current infomation</p>
+      <div className="grid grid-cols-9">
+        <div className="col-span-10 grid grid-cols-3 grid-rows-2 gap-5">
+          <div className="shadow-xl bg-white rounded-lg ">
             <div className="text-center w-full text-md font-medium text-gray-900 dark:text-gray-300">
               Nhiệt độ
             </div>
@@ -90,7 +131,7 @@ export default function Dashboard() {
               <FaTemperatureHigh size={28} />
             </div>
           </div>
-          <div className="shadow-2xl bg-white rounded-lg">
+          <div className="shadow-xl bg-white rounded-lg">
             <div className="text-center w-full text-md font-medium text-gray-900 dark:text-gray-300">
               Độ Ẩm
             </div>
@@ -99,25 +140,8 @@ export default function Dashboard() {
               <WiHumidity size={40}></WiHumidity>
             </div>
           </div>
-          <div className="shadow-2xl bg-white rounded-lg">
-            <div className="text-center w-full text-md font-medium text-gray-900 dark:text-gray-300">
-              Đèn
-            </div>
-            <div className='p-5'>
-              {leds?.map((items) => {
-                return (
-                  <div key={items.led_number}>
-                    <div className="flex items-center justify-center">
-                      <TbLamp size={40} />
-                      <div className='text-3xl'>{items.led_number} :</div>
-                      <div>{items.state === 'ON' ? <TbBulb size={40}/> : <TbBulbOff size={40}/>}</div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-          <div className="shadow-2xl bg-white rounded-lg">
+
+          <div className="shadow-xl bg-white rounded-lg">
             <div className="text-center w-full text-md font-medium text-gray-900 dark:text-gray-300">
               Số người
             </div>

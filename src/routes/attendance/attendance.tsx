@@ -58,7 +58,7 @@ export default function Attendance() {
   }, [])
 
   return (
-    <div className="p-2">
+    <div className="">
       <h2 className="text-lg text-gray-900  dark:text-white font-semibold">Attendace Calendar</h2>
       <p className="text-sm text-gray-500 mb-5">You should go to gyms oftenly</p>
       {userDetail && (
