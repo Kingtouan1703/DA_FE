@@ -6,16 +6,32 @@ export interface LedQuery {
   led_number: number
 }
 
+export interface DeviceQuery extends Omit<LedQuery, 'led_number'> {}
+
 export const ControllerLed = (query: LedQuery) => {
   return axios2.request({
     url: `${process.env.REACT_APP_BACK_END}/room/controll-led?led_number=${query.led_number}&state=${query.state}`,
-    method: 'get'
+    method: 'get',
+  })
+}
+
+export const controllFan = (query: DeviceQuery) => {
+  return axios2.request({
+    url: `${process.env.REACT_APP_BACK_END}/room/controll-fan?state=${query.state}`,
+    method: 'get',
+  })
+}
+
+export const controllAir = (query: DeviceQuery) => {
+  return axios2.request({
+    url: `${process.env.REACT_APP_BACK_END}/room/controll-air?state=${query.state}`,
+    method: 'get',
   })
 }
 
 export enum Role {
   ADMIN = 'admin',
-  USER = 'user'
+  USER = 'user',
 }
 
 export interface UserData {
@@ -29,6 +45,6 @@ export interface UserData {
 export const getUsers = () => {
   return axios2.request<UserData[]>({
     url: `${process.env.REACT_APP_BACK_END}/user`,
-    method: 'get'
+    method: 'get',
   })
 }

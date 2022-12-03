@@ -2,7 +2,7 @@ import { axios2 } from '../instances.api'
 
 export enum LedStatus {
   ON = 'ON',
-  OFF = 'OFF'
+  OFF = 'OFF',
 }
 
 export interface LedData {
@@ -17,11 +17,13 @@ export interface RoomData {
   humidity: number
   temperature: number
   amount_gymers: number
+  air_condition_state: LedStatus
+  fan_state: LedStatus
 }
 
 export const getRoomInfo = () => {
   return axios2.request<RoomData[]>({
     url: `${process.env.REACT_APP_BACK_END}/room/room-info`,
-    method: 'get'
+    method: 'get',
   })
 }

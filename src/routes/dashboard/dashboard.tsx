@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
-import { getRoomInfo, LedData } from '../../api/dashboard/dashboard.apt'
+import { getRoomInfo, LedData, RoomData } from '../../api/dashboard/dashboard.apt'
 import { handleError } from '../../api/instances.api'
 import FlipClockCountdown from '@leenguyen/react-flip-clock-countdown'
 import '@leenguyen/react-flip-clock-countdown/dist/index.css'
-import { FaTemperatureHigh } from 'react-icons/fa'
+import { FaTemperatureHigh, FaFan } from 'react-icons/fa'
 import { WiHumidity } from 'react-icons/wi'
 import { TbLamp, TbBulb, TbBulbOff } from 'react-icons/tb'
 import { SlPeople } from 'react-icons/sl'
+import { AiFillDashboard } from 'react-icons/ai'
 export const socket = io(`${process.env.REACT_APP_BACK_END}`)
 
 interface RoomSensorPayload {
@@ -21,7 +22,8 @@ export default function Dashboard() {
   const [amountUsers, setAmountUsers] = useState<number>()
   const [humidity, setHumidity] = useState<number>()
   const [leds, setLeds] = useState<LedData[]>()
-  
+  const [airCondition, setAirCondition] = useState<'ON' | 'OFF'>()
+  const [fanState, setFanState] = useState<'ON' | 'OFF'>()
   const getRoomdata = async () => {
     try {
       const roomInfo = await getRoomInfo()
@@ -30,6 +32,8 @@ export default function Dashboard() {
       setAmountUsers(data.amount_gymers)
       setTemp(data.temperature)
       setLeds(data.leds)
+      setAirCondition(data.air_condition_state)
+      setFanState(data.fan_state)
     } catch (error) {
       handleError(error as any)
     }
@@ -63,12 +67,22 @@ export default function Dashboard() {
       const data = roomInfo.data[0]
       setAmountUsers(data.amount_gymers)
     })
+
+    socket.on('fan_change', (data) => {
+      setFanState(data.fan_state)
+    })
+
+    socket.on('air_change', (data) => {
+      setAirCondition(data.air_state)
+    })
     return () => {
       socket.off('room_sensor')
       socket.off('connect')
       socket.off('disconnect')
       socket.off('user_amount')
       socket.off('led_change ')
+      socket.off('fan_change')
+      socket.off('air_change')
     }
   }, [])
   console.log(socket)
@@ -76,26 +90,25 @@ export default function Dashboard() {
   date.setHours(0, 0, 0, 0)
   date.setDate(date.getDate() + 1)
   return (
-    <div className="">
-      <h2 className="text-lg text-gray-900  font-medium  dark:text-white font-semiFbold">
-        {' '}
+    <div className=''>
+      <h2 className='text-lg text-gray-900  font-medium  dark:text-white font-semiFbold'>
         Dashboard Page
       </h2>
-      <div className="rounded-lg">
-        <div className="text-sm text-gray-500 mb-5">Lamp Infomation</div>
-        <div className="flex mb-5">
+      <div className='rounded-lg'>
+        <div className='text-sm text-gray-500 mb-5'>Lamp Infomation</div>
+        <div className='flex mb-5'>
           {leds?.map((items) => {
             return (
               <div
-                className="flex items-center justify-center shadow-xl bg-white rounded-lg mr-2 p-3"
+                className='flex items-center justify-center shadow-xl bg-white rounded-lg mr-2 p-3'
                 key={items.led_number}>
                 <TbLamp size={40} />
-                <div className="text-3xl">{items.led_number} :</div>
+                <div className='text-3xl'>{items.led_number} :</div>
                 <div>
                   {items.state === 'ON' ? (
-                    <TbBulb className="mx-2" size={40} />
+                    <TbBulb className='mx-2' size={40} />
                   ) : (
-                    <TbBulbOff className="mx-2" size={40} />
+                    <TbBulbOff className='mx-2' size={40} />
                   )}
                 </div>
               </div>
@@ -103,68 +116,67 @@ export default function Dashboard() {
           })}
         </div>
       </div>
-      <div className="rounded-lg">
-        <div className="text-sm text-gray-500 mb-5">Device Infomation</div>
-        <div className="flex mb-5">
-          <div className="text-center w-full text-md font-medium text-gray-900 dark:text-gray-300">
-            Nhiệt độ
+      <div className='rounded-lg'>
+        <div className='text-sm text-gray-500 mb-5'>Device Infomation</div>
+        <div className='flex mb-5'>
+          <div className='p-5 flex justify-center items-center shadow-xl bg-white mr-2'>
+            <FaFan size={28} />
+            {airCondition && airCondition}
           </div>
-          <div className="p-5 flex justify-center items-center">
-            <div className="text-3xl ">
-              {temp} <span className="mr-2">&#8451;</span>
-            </div>
-            <FaTemperatureHigh size={28} />
+          <div className='p-5 flex justify-center items-center shadow-xl bg-white'>
+            <AiFillDashboard size={28} />
+            {fanState && fanState}
           </div>
         </div>
       </div>
-      <p className="text-sm text-gray-500 mb-5">Room current infomation</p>
-      <div className="grid grid-cols-9">
-        <div className="col-span-10 grid grid-cols-3 grid-rows-2 gap-5">
-          <div className="shadow-xl bg-white rounded-lg ">
-            <div className="text-center w-full text-md font-medium text-gray-900 dark:text-gray-300">
+      <p className='text-sm text-gray-500 mb-5'>Room current infomation</p>
+      <div className='grid grid-cols-9'>
+        <div className='col-span-10 grid grid-cols-3   gap-5'>
+          <div className='shadow-xl bg-white rounded-lg '>
+            <div className='text-center w-full text-md font-medium text-gray-900 dark:text-gray-300'>
               Nhiệt độ
             </div>
-            <div className="p-5 flex justify-center items-center">
-              <div className="text-3xl ">
-                {temp} <span className="mr-2">&#8451;</span>
+            <div className='p-5 flex justify-center items-center'>
+              <div className='text-3xl '>
+                {temp} <span className='mr-2'>&#8451;</span>
               </div>
               <FaTemperatureHigh size={28} />
             </div>
           </div>
-          <div className="shadow-xl bg-white rounded-lg">
-            <div className="text-center w-full text-md font-medium text-gray-900 dark:text-gray-300">
+          <div className='shadow-xl bg-white rounded-lg'>
+            <div className='text-center w-full text-md font-medium text-gray-900 dark:text-gray-300'>
               Độ Ẩm
             </div>
-            <div className="p-5 flex justify-center items-center">
-              <div className="text-3xl">{humidity} </div>
-              <WiHumidity size={40}></WiHumidity>
+            <div className='p-5 flex justify-center items-center'>
+              <div className='text-3xl'>{humidity} </div>
+              <WiHumidity size={40} />
             </div>
           </div>
 
-          <div className="shadow-xl bg-white rounded-lg">
-            <div className="text-center w-full text-md font-medium text-gray-900 dark:text-gray-300">
+          <div className='shadow-xl bg-white rounded-lg'>
+            <div className='text-center w-full text-md font-medium text-gray-900 dark:text-gray-300'>
               Số người
             </div>
-            <div className="p-5 flex justify-center items-center">
-              <div className="text-3xl ">{amountUsers} </div>
-              <SlPeople size={30}></SlPeople>
+            <div className='p-5 flex justify-center items-center'>
+              <div className='text-3xl '>{amountUsers} </div>
+              <SlPeople size={30} />
             </div>
           </div>
         </div>
-        <div className=" w-full p-5 col-span-10 ">
-          <div className=" rounded-lg ">
-            <div className="text-center w-full text-md font-medium text-gray-900 dark:text-gray-300">
+        <div className=' w-full p-5 col-span-10 '>
+          <div className=' rounded-lg '>
+            <div className='text-center w-full text-md font-medium text-gray-900 dark:text-gray-300'>
               Time
             </div>
             <FlipClockCountdown
               to={date.getTime()}
-              className=" justify-center"
+              className=' justify-center'
               labels={['DAYS', 'HOURS', 'MINUTES', 'SECONDS']}
               labelStyle={{
                 fontSize: 10,
                 fontWeight: 500,
                 textTransform: 'uppercase',
-                color: 'black'
+                color: 'black',
               }}
               digitBlockStyle={{ width: 40, height: 60, fontSize: 30 }}
               dividerStyle={{ color: 'white', height: 1 }}
