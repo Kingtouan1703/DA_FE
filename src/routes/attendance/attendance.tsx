@@ -42,16 +42,7 @@ export default function Attendance() {
       setUserDetai(user.data)
     } catch (error) {}
   }
-  const registerOnline = async () => {
-    try {
-      const res = await registerFinger({ user_id })
-      console.log(res)
-      getUserDetail()
-      toast('register success')
-    } catch (error) {
-      handleError(error as any)
-    }
-  }
+  
   useEffect(() => {
     userAttendanceTime()
     getUserDetail()
@@ -59,7 +50,7 @@ export default function Attendance() {
 
   return (
     <div className="">
-      <h2 className="text-lg text-gray-900  dark:text-white font-semibold">Attendace Calendar</h2>
+      <h2 className="text-lg text-gray-900  dark:text-white font-semibold">Attendance Calendar</h2>
       <p className="text-sm text-gray-500 mb-5">You should go to gyms oftenly</p>
       {userDetail && (
         <div className="h-4/6">
@@ -71,15 +62,11 @@ export default function Attendance() {
             height={600}
           />
           <div className="text-md font-semibold">
-            FingerPrint Register Onine :{userDetail.finger_register ? 'True' : 'False'}
           </div>
           <div className="text-md font-semibold">
-            FingerPrint Register Offline :{userDetail.can_use_finger ? 'True' : 'False'}
+            FingerPrint Register:{userDetail.can_use_finger ? 'True' : 'False'}
           </div>
           <div className="text-md font-semibold"> Attendance: {attendance?.length}</div>
-          {!userDetail?.finger_register && (
-            <Button onClick={registerOnline}> Register to tracking your workout</Button>
-          )}
         </div>
       )}
     </div>

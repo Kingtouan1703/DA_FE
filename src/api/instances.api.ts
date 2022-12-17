@@ -9,18 +9,18 @@ export interface RequestOptions {
 export interface ResponseFormat<D> {
   code: number | string
   state: number
-  data: D ;
+  data: D
+  msg?:string
 }
-export interface ErrorResponse   {
-  message : string , 
-  statusCode:number
+export interface ErrorResponse {
+  message: string
+  statusCode: number
 }
 
-export const handleError = (data : AxiosError<ErrorResponse>) => {
-  const {response} = data
-  
-  toast(response?.data!.message  || 'unexpect error ',  {theme : 'dark'})
+export const handleError = (data: AxiosError<ErrorResponse>) => {
+  const { response } = data
 
+  toast(response?.data!.message || 'unexpect error', { type: 'error' })
 }
 
 export class axios2 {
@@ -32,8 +32,8 @@ export class axios2 {
       url: url,
       data: body,
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     }
     return axios.request<ResponseFormat<Data>>(requestConfig).then((res) => res.data)
   }
@@ -44,7 +44,7 @@ axiosApiInstance.interceptors.request.use(
     const token = Cookies.get('token')
 
     config.headers = {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     }
     return config
   },
@@ -58,7 +58,7 @@ axiosApiInstance.interceptors.response.use(
     const token = Cookies.get('token')
 
     config.headers = {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     }
     return config
   },

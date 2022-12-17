@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { AiFillDashboard } from 'react-icons/ai'
 import { FaFan } from 'react-icons/fa'
 import { TbBulb, TbBulbOff, TbLamp } from 'react-icons/tb'
+import { toast } from 'react-toastify'
 import {
   controllAir,
   ControllerLed,
@@ -12,11 +13,13 @@ import {
 } from '../../api/admin/admin.api'
 import { getRoomInfo, LedData, LedStatus, RoomData } from '../../api/dashboard/dashboard.apt'
 import { handleError } from '../../api/instances.api'
+import { registerFinger } from '../../api/user/user.api'
 
 export default function Admin() {
   const [users, setUsers] = useState<UserData[]>()
   const [leds, setLeds] = useState<LedData[]>()
   const [roomDetail, setRoomDetail] = useState<RoomData>()
+  const [userID, setUSerId] = useState<string>()
   const handleControllLed = async (state: LedStatus, led_number: number) => {
     const oppositeState = state === 'ON' ? LedStatus.OFF : LedStatus.ON
     try {
@@ -66,6 +69,26 @@ export default function Admin() {
       handleError(error as any)
     }
   }
+
+  const registerOnline = async () => {
+    if(!userID) {
+      toast('Vui lòng nhập cả User ID' , {type : 'warning'})
+      return
+    }
+    try {
+      const res = await registerFinger({ user_id : userID })
+      toast(res.msg ?? 'RegisterSuccess')
+      setUSerId('')
+    } catch (error) {
+      handleError(error as any)
+    }
+  }
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault()
+    registerOnline()
+  }
+
   useEffect(() => {
     getLeds()
     getAlluser()
@@ -87,7 +110,7 @@ export default function Admin() {
                   <div>{items.state === 'ON' ? <TbBulb size={40} /> : <TbBulbOff size={40} />}</div>
                   <Button onClick={() => handleControllLed(items.state, items.led_number)}>
                     {items.state === 'ON' ? 'OFF' : 'ON'}
-                  </Button> 
+                  </Button>
                 </div>
               </div>
             )
@@ -127,7 +150,7 @@ export default function Admin() {
                 Name
               </th>
               <th scope='col' className='py-3 px-6'>
-                Register Online
+                User ID
               </th>
               <th scope='col' className='py-3 px-6'>
                 Register Offline
@@ -136,7 +159,7 @@ export default function Admin() {
           </thead>
           <tbody>
             {users?.map((user) => {
-              const { name, username, finger_register, can_use_finger } = user
+              const { name, username, can_use_finger, _id } = user
               return (
                 <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
                   <td
@@ -145,13 +168,37 @@ export default function Admin() {
                     {name}
                   </td>
                   <td className='py-4 px-6'>{username}</td>
-                  <td className='py-4 px-6'>{finger_register ? 'True' : 'False'}</td>
+                  <td className='py-4 px-6'>{_id}</td>
                   <td className='py-4 px-6'>{can_use_finger ? 'True' : 'False'}</td>
                 </tr>
               )
             })}
           </tbody>
         </table>
+      </div>
+      <div>
+        <h2 className='text-md text-gray-900 font-semibold mb-3 mt-3'>Register fingerprint for user</h2>
+        <form className='space-y-4 md:space-y-6' action='#' onSubmit={handleSubmit}>
+          <div>
+            <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
+              UserID
+            </label>
+            <input
+              value={userID}
+              onChange={(e) => setUSerId(e.target.value)}
+              name='email'
+              id='email'
+              className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+              placeholder='UserID'
+            />
+          </div>
+          <div></div>
+          <div className='flex items-center justify-between'>
+            <button className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>
+              Register for user
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   )

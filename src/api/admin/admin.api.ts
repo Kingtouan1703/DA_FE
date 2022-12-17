@@ -35,6 +35,7 @@ export enum Role {
 }
 
 export interface UserData {
+  _id:string;
   username: string
   name: string
   finger_register: boolean | null
