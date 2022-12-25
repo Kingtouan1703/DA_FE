@@ -9,7 +9,7 @@ export const getUserInfo = (_id: string) => {
 }
 
 export interface RegisterFingerParams {
-  user_id: string
+  user_index: number
 }
 
 export const registerFinger = (params: RegisterFingerParams) => {
@@ -25,7 +25,7 @@ export interface AttendaceData {
   date:string;
 
 }
-export const getAttendanceTime = (_id: string) => {
+export const getAttendanceTime = (_id: number) => {
   return axios2.request<AttendaceData[]>({
     url: `${process.env.REACT_APP_BACK_END}/roll-call/time?user_id=${_id}`,
     method: 'get'

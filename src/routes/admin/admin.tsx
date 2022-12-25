@@ -19,7 +19,7 @@ export default function Admin() {
   const [users, setUsers] = useState<UserData[]>()
   const [leds, setLeds] = useState<LedData[]>()
   const [roomDetail, setRoomDetail] = useState<RoomData>()
-  const [userID, setUSerId] = useState<string>()
+  const [userIndex, setUserIndex] = useState<number | null>()
   const handleControllLed = async (state: LedStatus, led_number: number) => {
     const oppositeState = state === 'ON' ? LedStatus.OFF : LedStatus.ON
     try {
@@ -71,14 +71,14 @@ export default function Admin() {
   }
 
   const registerOnline = async () => {
-    if(!userID) {
-      toast('Vui lòng nhập cả User ID' , {type : 'warning'})
+    if (!userIndex) {
+      toast('Vui lòng nhập cả User Index', { type: 'warning' })
       return
     }
     try {
-      const res = await registerFinger({ user_id : userID })
+      const res = await registerFinger({ user_index: userIndex })
       toast(res.msg ?? 'RegisterSuccess')
-      setUSerId('')
+      setUserIndex(null)
     } catch (error) {
       handleError(error as any)
     }
@@ -155,11 +155,14 @@ export default function Admin() {
               <th scope='col' className='py-3 px-6'>
                 Register Offline
               </th>
+              <th scope='col' className='py-3 px-6'>
+                User Index
+              </th>
             </tr>
           </thead>
           <tbody>
             {users?.map((user) => {
-              const { name, username, can_use_finger, _id } = user
+              const { name, username, can_use_finger, _id, user_index } = user
               return (
                 <tr className='bg-white border-b dark:bg-gray-800 dark:border-gray-700'>
                   <td
@@ -170,6 +173,7 @@ export default function Admin() {
                   <td className='py-4 px-6'>{username}</td>
                   <td className='py-4 px-6'>{_id}</td>
                   <td className='py-4 px-6'>{can_use_finger ? 'True' : 'False'}</td>
+                  <td className='py-4 px-6'>{user_index}</td>
                 </tr>
               )
             })}
@@ -177,15 +181,17 @@ export default function Admin() {
         </table>
       </div>
       <div>
-        <h2 className='text-md text-gray-900 font-semibold mb-3 mt-3'>Register fingerprint for user</h2>
+        <h2 className='text-md text-gray-900 font-semibold mb-3 mt-3'>
+          Register fingerprint for user
+        </h2>
         <form className='space-y-4 md:space-y-6' action='#' onSubmit={handleSubmit}>
           <div>
             <label className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'>
-              UserID
+              User index
             </label>
             <input
-              value={userID}
-              onChange={(e) => setUSerId(e.target.value)}
+              value={userIndex ?? 0}
+              onChange={(e) => setUserIndex(+e.target.value)}
               name='email'
               id='email'
               className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'

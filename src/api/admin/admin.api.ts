@@ -41,6 +41,8 @@ export interface UserData {
   finger_register: boolean | null
   can_use_finger: boolean | null
   roles: Role[] | []
+  user_index:number;
+
 }
 
 export const getUsers = () => {
